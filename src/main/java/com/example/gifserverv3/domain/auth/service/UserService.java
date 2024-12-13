@@ -1,5 +1,6 @@
 package com.example.gifserverv3.domain.auth.service;
 
+import com.example.gifserverv3.domain.auth.dto.request.ChangePasswordRequest;
 import com.example.gifserverv3.domain.auth.dto.request.LoginRequest;
 import com.example.gifserverv3.domain.auth.dto.request.SignOutRequest;
 import com.example.gifserverv3.domain.auth.dto.request.SignupRequest;
@@ -31,7 +32,7 @@ public class UserService {
         String emailIdRegex = "gsm.hs.kr";
 
         // 회원 중복 확인
-        boolean isUserNameDuplicated = userRepository.existsByName(username);
+        boolean isUserNameDuplicated = userRepository.existsByUsername(username);
         boolean isUserEmailDuplicated = userRepository.existsByEmail(email);
         if (isUserNameDuplicated || isUserEmailDuplicated) {
             throw new CustomException(DUPLICATED_USERNAME);
@@ -43,7 +44,7 @@ public class UserService {
             throw new CustomException(NOT_GSM_EMAIL);
 
         UserEntity user = UserEntity.builder()
-                .name(username)
+                .username(username)
                 .password(password)
                 .email(signupRequestDto.getEmail())
                 .build();
@@ -55,7 +56,7 @@ public class UserService {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-        UserEntity user = userRepository.findByName(username).orElseThrow(
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(
                 () -> new CustomException(NOT_MATCH_INFORMATION)
         );
 
@@ -71,7 +72,7 @@ public class UserService {
     public void signOut(SignOutRequest signOutRequestDto, UserEntity user) {
 
         // 사용자명 일치 여부 확인
-        user = userRepository.findByName(signOutRequestDto.getUsername()).orElseThrow(
+        user = userRepository.findByUsername(signOutRequestDto.getUsername()).orElseThrow(
                 () -> new CustomException(NOT_MATCH_INFORMATION)
         );
 
@@ -80,16 +81,41 @@ public class UserService {
             throw new CustomException(NOT_MATCH_INFORMATION);
         }
 
-        userRepository.deleteById(user.getUsersId());
+        userRepository.deleteById(user.getUserId());
     }
 
     // 유저 정보 반환
     @Transactional
     public UserInfoResponse findUserInfo(UserEntity user) {
-        UserEntity toDtoUser = userRepository.findById(user.getUsersId()).orElseThrow(() -> new CustomException(NOT_MATCH_INFORMATION));
+        UserEntity toDtoUser = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException(NOT_MATCH_INFORMATION));
         return UserInfoResponse.builder()
-                .id(toDtoUser.getUsersId())
-                .username(toDtoUser.getName())
+                .userId(toDtoUser.getUserId())
+                .username(toDtoUser.getUsername())
                 .build();
+    }
+
+    // 비밀번호 변경
+    public void changePassword(Long userId, ChangePasswordRequest request) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        String password = request.getCurrentPassword();
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(NOT_MATCH_INFORMATION);
+        }
+
+        // 새 비밀번호를 해싱하여 설정
+        String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+
+        // 새 객체 생성
+        UserEntity updatedUser = UserEntity.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(encodedNewPassword) // 해싱된 새 비밀번호 설정
+                .build();
+
+        userRepository.save(updatedUser); // DB에 변경 내용 저장
     }
 }
