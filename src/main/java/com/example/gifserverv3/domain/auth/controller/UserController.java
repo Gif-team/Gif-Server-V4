@@ -1,11 +1,13 @@
 package com.example.gifserverv3.domain.auth.controller;
 
+import com.example.gifserverv3.domain.auth.dto.request.ChangePasswordRequest;
 import com.example.gifserverv3.domain.auth.dto.request.LoginRequest;
 import com.example.gifserverv3.domain.auth.dto.request.SignupRequest;
 import com.example.gifserverv3.domain.auth.dto.response.UserInfoResponse;
 import com.example.gifserverv3.domain.auth.entity.UserEntity;
 import com.example.gifserverv3.domain.auth.repository.UserRepository;
 import com.example.gifserverv3.domain.auth.service.UserService;
+import com.example.gifserverv3.global.exception.CustomException;
 import com.example.gifserverv3.global.util.MsgResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -43,7 +45,7 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @DeleteMapping
+    @DeleteMapping("/user/delete")
     public ResponseEntity<MsgResponseDto> signOut(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // 세션이 존재할 경우 가져옴
         if (session != null) {
@@ -68,11 +70,42 @@ public class UserController {
         }
         
         UserInfoResponse userInfoResponse = UserInfoResponse.builder()
-                .id(user.getUsersId())
-                .username(user.getName())
+                .userId(user.getUserId())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .build();
 
         return ResponseEntity.ok(userInfoResponse); // 사용자 정보 반환
+    }
+
+    // 비밀번호 변경
+    @PutMapping("/pwchange")
+    public ResponseEntity<MsgResponseDto> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequestDto, HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // 세션이 존재할 경우 가져옴
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        UserEntity user = (UserEntity) session.getAttribute("user"); // 세션에서 사용자 정보 가져오기
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        try {
+            userService.changePassword(user.getUserId(), changePasswordRequestDto);
+            return ResponseEntity.ok(new MsgResponseDto("비밀번호가 성공적으로 변경되었습니다.", HttpStatus.OK.value()));
+        } catch (CustomException ex) {
+            // Check for password mismatch error and return a custom message
+            if ("NOT_MATCH_INFORMATION".equals(ex.getMessage())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new MsgResponseDto("비밀번호가 일치하지 않습니다", HttpStatus.BAD_REQUEST.value()));
+            }
+
+            // Handle other errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MsgResponseDto("비밀번호가 일치하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        }
     }
 }
