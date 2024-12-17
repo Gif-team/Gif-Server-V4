@@ -50,5 +50,22 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPostById(@PathVariable Long id, HttpServletRequest request) {
+
+        // 세션에서 사용자 정보 가져오기
+        HttpSession session = request.getSession(false);
+        // 세션이 존재하면 가져오고, 없으면 null 반환
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        PostEntity post = postService.getPostById(id); // 서비스에서 특정 id로 게시물 조회
+
+        // PostEntity를 SinglePostResponse로 변환하여 응답 반환
+        SinglePostResponse responseDto = convertToSinglePostResponse(post);
+        return ResponseEntity.ok(responseDto);
+    }
 
 }
