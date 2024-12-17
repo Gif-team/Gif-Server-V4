@@ -6,6 +6,7 @@ import com.example.gifserverv3.domain.auth.dto.request.SignOutRequest;
 import com.example.gifserverv3.domain.auth.dto.request.SignupRequest;
 import com.example.gifserverv3.domain.auth.dto.response.UserInfoResponse;
 import com.example.gifserverv3.domain.auth.repository.UserRepository;
+import com.example.gifserverv3.global.data.Name;
 import com.example.gifserverv3.global.exception.CustomException;
 import com.example.gifserverv3.domain.auth.entity.UserEntity;
 import static com.example.gifserverv3.global.exception.ErrorCode.*;
@@ -23,13 +24,23 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // 회원가입
     public void signup(SignupRequest signupRequestDto) {
-        String username = signupRequestDto.getUsername();
         String email = signupRequestDto.getEmail();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
-        String emailIdRegex = "gsm.hs.kr";
+        // 이메일 도메인 체크
+        String emailDomainRegex = "gsm.hs.kr";
+        int index = email.indexOf("@");
+        String emailDomain = email.substring(index + 1);
+        if (!emailDomain.equals(emailDomainRegex)) {
+            throw new CustomException(NOT_GSM_EMAIL);
+        }
+
+        // 이메일 ID 추출 (예: s24021@gsm.hs.kr -> s24021)
+        String emailId = email.substring(0, index);
+
+        // 사용자 이름 자동 생성 로직
+        String username = Name.getUsernameFromEmail(email);
 
         // 회원 중복 확인
         boolean isUserNameDuplicated = userRepository.existsByUsername(username);
@@ -38,25 +49,22 @@ public class UserService {
             throw new CustomException(DUPLICATED_USERNAME);
         }
 
-        int index = email.indexOf("@");
-        String emailDomain = email.substring(index + 1);
-        if (!emailDomain.equals(emailIdRegex))
-            throw new CustomException(NOT_GSM_EMAIL);
-
+        // UserEntity 생성 및 저장
         UserEntity user = UserEntity.builder()
-                .username(username)
+                .username(username) // 자동 생성된 username
                 .password(password)
-                .email(signupRequestDto.getEmail())
+                .email(email)
                 .build();
+
         userRepository.save(user);
     }
 
     // 로그인
     public UserEntity login(LoginRequest loginRequestDto) {
-        String username = loginRequestDto.getUsername();
+        String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
-        UserEntity user = userRepository.findByUsername(username).orElseThrow(
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(NOT_MATCH_INFORMATION)
         );
 
