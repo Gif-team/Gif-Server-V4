@@ -43,6 +43,8 @@ public class WebSecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/refresh")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/post/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/badge/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/images/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/ws-stomp/**")).permitAll()
