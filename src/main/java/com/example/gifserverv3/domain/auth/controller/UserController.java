@@ -118,4 +118,22 @@ public class UserController {
                     .body(new MsgResponseDto("비밀번호가 일치하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<MsgResponseDto> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        // 세션이 존재하지 않으면 로그인되지 않은 상태
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 상태가 아닙니다.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        // 세션 무효화
+        session.invalidate();
+
+        // 로그아웃 성공 메시지 반환
+        MsgResponseDto responseDto = new MsgResponseDto("로그아웃이 완료되었습니다.", 200);
+        return ResponseEntity.ok(responseDto);
+    }
 }
