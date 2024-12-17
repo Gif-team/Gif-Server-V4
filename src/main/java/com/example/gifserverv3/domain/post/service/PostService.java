@@ -78,6 +78,14 @@ public class PostService {
         }
     }
 
+    // 모든 게시물 조회
+    public List<PostEntity> getAllPosts() {
+        // 모든 게시물 조회
+        return postRepository.findAll();
+    }
+
+
+
 
 
 
