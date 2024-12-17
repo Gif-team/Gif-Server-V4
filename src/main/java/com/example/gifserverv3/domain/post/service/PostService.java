@@ -137,6 +137,23 @@ public class PostService {
         postRepository.save(post);
     }
 
+    @Transactional
+    public void updateTime(Long postId, UserEntity user) {
+        // Post 조회
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
+
+        // 수정 권한 확인
+        if (!post.getWriterId().equals(user.getUserId())) {
+            throw new CustomException(INVALID_AUTHORIZED);
+        }
+
+        // 현재 시간으로 'realtime' 필드 업데이트
+        post.setRealtime(LocalDateTime.now());
+
+        postRepository.save(post);
+    }
+
 
 
 
