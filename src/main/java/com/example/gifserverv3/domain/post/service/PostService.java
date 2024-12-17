@@ -66,6 +66,18 @@ public class PostService {
         // 저장 후 반환
         return postRepository.save(postEntity);
     }
+    // 특정 게시물 조회
+    public PostEntity getPostById(Long id) {
+        // PostRepository에서 특정 ID에 해당하는 게시물을 찾음
+        Optional<PostEntity> post = postRepository.findById(id);
+        if (post.isPresent()) {
+            return post.get();
+        } else {
+            // 예외 처리 (존재하지 않는 게시물일 경우)
+            throw new RuntimeException("Post not found with id: " + id);
+        }
+    }
+
 
 
 
