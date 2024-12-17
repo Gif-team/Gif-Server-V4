@@ -170,7 +170,41 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    @Transactional
+    public boolean toggleLike(UserEntity user, Long postId) {
+        // postId로 PostEntity 조회
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
 
+        // userId와 postId로 기존 LikeEntity 조회
+        Optional<LikeEntity> existingLike = likeRepository.findByUserAndPost(user, post);
+
+        // 기존 좋아요가 없는 경우 새로 생성
+        LikeEntity likeEntity = existingLike.orElse(LikeEntity.builder()
+                .user(user) // user 정보 설정
+                .post(post) // post 정보 설정
+                .liked(false) // 초기 상태 false로 설정
+                .build());
+
+        // 좋아요 상태 반전
+        likeEntity.toggleLike();
+
+        // LikeEntity 저장
+        likeRepository.save(likeEntity);
+
+        // 좋아요 수 업데이트
+        if (likeEntity.isLiked()) {
+            post.setLikeNumber(post.getLikeNumber() + 1);
+        } else {
+            post.setLikeNumber(post.getLikeNumber() - 1);
+        }
+
+        // 게시글 엔티티 저장
+        postRepository.save(post);
+
+        // 변경된 좋아요 상태 반환
+        return likeEntity.isLiked();
+    }
 
 
 
