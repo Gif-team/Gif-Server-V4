@@ -84,6 +84,34 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    // SinglePostResponse로 변환
+    public SinglePostResponse convertToSinglePostResponse(PostEntity postEntity) {
+        SinglePostResponse.BuildingResponseDto buildingDto = new SinglePostResponse.BuildingResponseDto(
+                postEntity.getBuilding().getId(), postEntity.getBuilding().getFloor());
+
+        return new SinglePostResponse(
+                postEntity.getPostid(),
+                postEntity.getTitle(),
+                postEntity.getContent(),
+                postEntity.isCategory(),
+                postEntity.getPrice(),
+                postEntity.getRealtime(),
+                postEntity.getWriter(),
+                postEntity.getWriterId(),
+                postEntity.getLikeNumber(),
+                buildingDto
+        );
+    }
+
+    // AllPostResponse로 변환
+    public AllPostResponse convertToAllPostResponse(List<PostEntity> postEntities) {
+        List<SinglePostResponse> postResponses = postEntities.stream()
+                .map(this::convertToSinglePostResponse)
+                .collect(Collectors.toList());
+
+        return new AllPostResponse(postResponses);
+    }
+
 
 
 
