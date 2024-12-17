@@ -89,5 +89,21 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PutMapping("/{postId}")
+    public ResponseEntity<MsgResponseDto> updatePost( @PathVariable Long postId, @RequestBody @Valid UpdateRequest requestDto, HttpSession session) {
+
+        // 세션에서 사용자 정보 가져오기
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        postService.updatePost(postId, requestDto, user);
+
+        MsgResponseDto responseDto = new MsgResponseDto("게시물 수정이 성공적으로 완료되었습니다.", 200);
+        return ResponseEntity.ok(responseDto);
+    }
+
 
 }
