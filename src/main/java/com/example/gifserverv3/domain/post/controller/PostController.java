@@ -156,6 +156,24 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+    // PostEntity를 SinglePostResponse로 변환하는 메소드
+    private SinglePostResponse convertToSinglePostResponse(PostEntity postEntity) {
 
+        SinglePostResponse.BuildingResponseDto buildingDto = new SinglePostResponse.BuildingResponseDto(
+                postEntity.getBuilding().getId(), postEntity.getBuilding().getFloor());
+
+        return new SinglePostResponse(
+                postEntity.getPostid(),
+                postEntity.getTitle(),
+                postEntity.getContent(),
+                postEntity.isCategory(),
+                postEntity.getPrice(),
+                postEntity.getRealtime(),
+                postEntity.getWriter(),
+                postEntity.getWriterId(),
+                postEntity.getLikeNumber(),
+                buildingDto
+        );
+    }
 
 }
