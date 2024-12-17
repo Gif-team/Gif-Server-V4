@@ -120,5 +120,19 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @DeleteMapping("/{postId}/delete")
+    public ResponseEntity<MsgResponseDto> deletePost(@PathVariable Long postId, HttpSession session) {
+        // 세션에서 사용자 정보 가져오기
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        postService.deletePost(postId, user);
+
+        MsgResponseDto responseDto = new MsgResponseDto("게시물이 성공적으로 삭제되었습니다.", 200);
+        return ResponseEntity.ok(responseDto);
+    }
 
 }
