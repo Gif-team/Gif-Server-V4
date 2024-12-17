@@ -1,1 +1,1 @@
-## GIF Server Version 3.0
+## GIF Server Version 4.0
