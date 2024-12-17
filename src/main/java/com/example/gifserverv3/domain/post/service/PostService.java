@@ -155,6 +155,21 @@ public class PostService {
     }
 
 
+    @Transactional
+    public void deletePost(Long postId, UserEntity user) {
+        // Post 조회
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
+
+        // 수정 권한 확인
+        if (!post.getWriterId().equals(user.getUserId())) {
+            throw new CustomException(INVALID_AUTHORIZED);
+        }
+
+        // 게시물 삭제
+        postRepository.delete(post);
+    }
+
 
 
 
