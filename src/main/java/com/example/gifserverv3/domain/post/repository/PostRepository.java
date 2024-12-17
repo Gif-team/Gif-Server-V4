@@ -13,4 +13,10 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     @Query("SELECT COUNT(p) FROM PostEntity p WHERE p.writerId = :userId AND p.category = false")
     long countFalseCategoryPostsByUserId(@Param("userId") Long userId);
 
+    // 좋아요 수 증가
+    @Modifying
+    @Query("UPDATE PostEntity p SET p.likeNumber = p.likeNumber + 1 WHERE p.postid = :postId")
+    void incrementLikeNumber(@Param("postId") Long postId);
+
+
 }
