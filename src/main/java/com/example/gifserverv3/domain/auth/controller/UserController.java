@@ -46,8 +46,14 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping("/user/delete")
-    public ResponseEntity<MsgResponseDto> signOut(HttpServletRequest request) {
+    public ResponseEntity<?> signOut(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // 세션이 존재할 경우 가져옴
+
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("로그인 해주세요."); // 세션이 없으면 로그인 요청
+        }
+
         if (session != null) {
             session.invalidate(); // 세션 무효화
         }
@@ -95,6 +101,10 @@ public class UserController {
 
         try {
             userService.changePassword(user.getUserId(), changePasswordRequestDto);
+
+            // 세션 무효화
+            session.invalidate();
+
             return ResponseEntity.ok(new MsgResponseDto("비밀번호가 성공적으로 변경되었습니다.", HttpStatus.OK.value()));
         } catch (CustomException ex) {
             // Check for password mismatch error and return a custom message
