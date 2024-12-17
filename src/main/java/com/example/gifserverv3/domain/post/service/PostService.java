@@ -112,6 +112,31 @@ public class PostService {
         return new AllPostResponse(postResponses);
     }
 
+    @Transactional
+    public void updatePost(Long postId, UpdateRequest requestDto, UserEntity user) {
+        // Post 조회
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
+
+        // 수정 권한 확인
+        if (!post.getWriterId().equals(user.getUserId())) {
+            throw new CustomException(INVALID_AUTHORIZED);
+        }
+
+        // 수정 가능한 필드 업데이트
+        post.setTitle(requestDto.getTitle());
+        post.setContent(requestDto.getContent());
+        post.setCategory(requestDto.isCategory());
+        post.setPrice(requestDto.getPrice());
+
+        // Building 정보 업데이트 (BuildingRequest로부터 id와 floor 값을 가져옴)
+        if (requestDto.getBuilding() != null) {
+            post.setBuilding(new PostEntity.Building(requestDto.getBuilding().getId(), requestDto.getBuilding().getFloor()));
+        }
+
+        postRepository.save(post);
+    }
+
 
 
 
