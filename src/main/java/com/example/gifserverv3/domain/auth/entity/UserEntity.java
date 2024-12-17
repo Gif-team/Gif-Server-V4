@@ -16,7 +16,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
+    @Column(name = "userId")
     private Long userId;
 
     @Column(name = "username")
