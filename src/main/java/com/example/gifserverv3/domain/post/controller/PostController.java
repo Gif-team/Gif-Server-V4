@@ -67,5 +67,27 @@ public class PostController {
         SinglePostResponse responseDto = convertToSinglePostResponse(post);
         return ResponseEntity.ok(responseDto);
     }
+    // 모든 게시물을 조회하는 엔드포인트
+    @GetMapping
+    public ResponseEntity<?> getAllPosts(HttpServletRequest request) {
+        List<PostEntity> posts = postService.getAllPosts(); // 서비스에서 모든 게시물 조회
+
+        // 세션에서 사용자 정보 가져오기
+        HttpSession session = request.getSession(false);
+        // 세션이 존재하면 가져오고, 없으면 null 반환
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        // PostEntity 리스트를 AllPostResponse로 변환하여 응답 반환
+        List<SinglePostResponse> postResponses = posts.stream()
+                .map(this::convertToSinglePostResponse)
+                .collect(Collectors.toList());
+
+        AllPostResponse responseDto = new AllPostResponse(postResponses);
+        return ResponseEntity.ok(responseDto);
+    }
+
 
 }
