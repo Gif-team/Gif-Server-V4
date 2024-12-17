@@ -135,4 +135,27 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<MsgResponseDto> toggleLike(@PathVariable Long postId, HttpServletRequest request) {
+        // 세션에서 user 가져오기
+        UserEntity user = (UserEntity) request.getSession().getAttribute("user");
+
+        // 예외 처리: 사용자 세션이 없는 경우
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
+        }
+
+        // 좋아요 처리
+        boolean isLiked = postService.toggleLike(user, postId);
+
+        // 상태에 따른 메시지 생성
+        String message = isLiked ? "좋아요를 눌렀습니다." : "좋아요를 취소하였습니다.";
+        MsgResponseDto responseDto = new MsgResponseDto(message, HttpStatus.OK.value());
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+
+
 }
