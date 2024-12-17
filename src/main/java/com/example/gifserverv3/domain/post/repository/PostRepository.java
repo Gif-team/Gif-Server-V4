@@ -18,5 +18,10 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     @Query("UPDATE PostEntity p SET p.likeNumber = p.likeNumber + 1 WHERE p.postid = :postId")
     void incrementLikeNumber(@Param("postId") Long postId);
 
+    // 좋아요 수 감소
+    @Modifying
+    @Query("UPDATE PostEntity p SET p.likeNumber = p.likeNumber - 1 WHERE p.postid = :postId")
+    void decrementLikeNumber(@Param("postId") Long postId);
+
 
 }
