@@ -20,6 +20,8 @@ public enum ErrorCode {
 
     NOT_MATCH_INFORMATION(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."),
 
+    FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "파일 업로드에 실패했습니다."),
+
     NOT_MATCH_POST(HttpStatus.BAD_REQUEST, "게시물을 찾을 수 없습니다."),
 
     INVALID_SESSION(HttpStatus.BAD_REQUEST, "세션이 유효하지 않습니다."),
