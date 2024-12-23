@@ -1,4 +1,4 @@
-package com.example.gifserverv3.global.config;
+package com.example.gifserverv3.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,11 +20,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    // 비밀번호 암호화
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,9 +38,11 @@ public class WebSecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/post/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/badge/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/chat/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/s3/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/image/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/chat/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/ws-stomp/**")).permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().authenticated()
