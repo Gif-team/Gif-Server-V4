@@ -1,9 +1,9 @@
-package com.example.gifserverv3.global.data;
+package com.example.gifserverv3.domain.name.service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Name {
+public class NameService {
 
     // 이메일 ID와 이름 매핑 데이터
     private static final Map<String, String> EMAIL_TO_NAME_MAP = new HashMap<>();
