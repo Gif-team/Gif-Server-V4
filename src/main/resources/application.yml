@@ -1,20 +1,33 @@
+# src/main/resources/application.yml
 spring:
   datasource:
-    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}?allowPublicKeyRetrieval=true&useSSL=false
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://ep-lively-moon-a1ujoo74.ap-southeast-1.aws.neon.tech/gifdb
+    username: gifdb_owner
+    password: ${PASSWORD}
+
   jpa:
     hibernate:
-      ddl-auto:  update
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-        dialect: org.hibernate.dialect.MySQLDialect
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  redis:
+    port: 6379
+    host: localhost
+  kafka:
+    bootstrap-servers: localhost:9092  # Kafka 클러스터 서버 주소
+    consumer:
+      group-id: chat-msg-group       # Consumer 그룹 ID
+      auto-offset-reset: earliest       # Consumer 오프셋 초기화 전략 (earliest: 가장 처음부터 읽음)
+      enable-auto-commit: true          # 자동 커밋 활성화
+      max-poll-records: 10              # 한 번에 가져올 최대 레코드 수
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    template:
+      default-topic: chat-topic         # 기본 Kafka 토픽 이름
 
   servlet:
     multipart:
@@ -23,6 +36,9 @@ spring:
 
 server:
   port: 8080
+  servlet:
+    session:
+      timeout: 30m
 
 cloud:
   aws:
@@ -38,3 +54,23 @@ cloud:
       auto: false
     bucket:
       name: ${BUCKET_NAME}
+    url:
+      name: https://s3.ap-northeast-2.amazonaws.com/gif-server-image-s3
+
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3309/gif_db?allowPublicKeyRetrieval=true&useSSL=false
+#    username: root
+#    password: 12345
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  h2:
+#    console:
+#      enabled: true
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        use_sql_comments: true
+#        dialect: org.hibernate.dialect.MySQLDialect
