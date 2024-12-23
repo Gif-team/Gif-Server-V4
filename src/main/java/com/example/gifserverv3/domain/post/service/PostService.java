@@ -11,21 +11,18 @@ import com.example.gifserverv3.domain.post.dto.response.SinglePostResponse;
 import com.example.gifserverv3.domain.post.entity.PostEntity;
 import com.example.gifserverv3.domain.post.repository.PostRepository;
 import com.example.gifserverv3.global.exception.CustomException;
-import com.example.gifserverv3.global.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.gifserverv3.global.exception.ErrorCode.*;
+import static com.example.gifserverv3.global.type.ErrorCode.*;
 
 @Service
 public class PostService {
@@ -59,7 +56,7 @@ public class PostService {
                 .price(createRequest.getPrice())
                 .realtime(now)
                 .writer(user.getUsername())
-                .writerId(user.getUserId())
+                .writerId(user.getId())
                 .building(new PostEntity.Building(createRequest.getBuilding().getId(), createRequest.getBuilding().getFloor()))
                 .build();
 
@@ -119,7 +116,7 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
 
         // 수정 권한 확인
-        if (!post.getWriterId().equals(user.getUserId())) {
+        if (!post.getWriterId().equals(user.getId())) {
             throw new CustomException(INVALID_AUTHORIZED);
         }
 
@@ -144,7 +141,7 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
 
         // 수정 권한 확인
-        if (!post.getWriterId().equals(user.getUserId())) {
+        if (!post.getWriterId().equals(user.getId())) {
             throw new CustomException(INVALID_AUTHORIZED);
         }
 
@@ -162,7 +159,7 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(NOT_MATCH_POST));
 
         // 수정 권한 확인
-        if (!post.getWriterId().equals(user.getUserId())) {
+        if (!post.getWriterId().equals(user.getId())) {
             throw new CustomException(INVALID_AUTHORIZED);
         }
 
@@ -205,10 +202,4 @@ public class PostService {
         // 변경된 좋아요 상태 반환
         return likeEntity.isLiked();
     }
-
-
-
-
-
-
 }

@@ -55,6 +55,7 @@ public class PostEntity {
 
     @Column(nullable = false, name = "likeNumber")
     @NotNull
+    @Builder.Default
     private int likeNumber = 0;
 
     @Embeddable
