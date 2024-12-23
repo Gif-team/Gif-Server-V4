@@ -2,10 +2,7 @@ package com.example.gifserverv3.domain.badge.controller;
 
 import com.example.gifserverv3.domain.auth.entity.UserEntity;
 import com.example.gifserverv3.domain.badge.service.BadgeService;
-import com.example.gifserverv3.global.exception.CustomException;
-import com.example.gifserverv3.global.exception.ErrorCode;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +32,7 @@ public class BadgeController {
         }
 
         // UserEntity에서 userId를 가져오기
-        Long userId = user.getUserId();
+        Long userId = user.getId();
 
         // 유저의 뱃지 상태를 반환
         Map<String, Boolean> badges = badgeService.updateBadgesForUser(userId);
