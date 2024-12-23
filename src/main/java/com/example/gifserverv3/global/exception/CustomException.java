@@ -1,14 +1,29 @@
 package com.example.gifserverv3.global.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.example.gifserverv3.global.type.ErrorCode;
+import lombok.*;
 
 @Getter
-public class CustomException extends RuntimeException{
-    private final ErrorCode errorCode;
+@Setter
+@NoArgsConstructor
+@Builder
+public class CustomException extends RuntimeException {
+
+    private ErrorCode errorCode;
+    private String errorMessage;
+
+    public CustomException(ErrorCode errorCode, String message) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorCode.getDescription() + " : " + message;
+    }
 
     public CustomException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
         this.errorCode = errorCode;
+        this.errorMessage = errorCode.getDescription();
     }
 }
+
+
+
+
+
