@@ -9,6 +9,7 @@ import com.example.gifserverv3.domain.auth.entity.response.UserInfoResponse;
 import com.example.gifserverv3.domain.auth.service.UserService;
 import com.example.gifserverv3.global.login.LoginCheck;
 import com.example.gifserverv3.global.util.ResponseUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
