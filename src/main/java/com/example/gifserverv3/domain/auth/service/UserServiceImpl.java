@@ -92,9 +92,9 @@ public class UserServiceImpl implements UserService {
     public void update(Long userId, UpdateRequest updateRequest) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        Optional<UserEntity> byNickname = userRepository.
+        Optional<UserEntity> byUsername = userRepository.
                 findByUsername(updateRequest.getUsername());
-        if (byNickname.isPresent()) {
+        if (byUsername.isPresent()) {
             throw new CustomException(ALREADY_USER_USERNAME, updateRequest.getUsername());
         }
         String currentNickname = user.getUsername();
