@@ -7,6 +7,7 @@ import com.example.gifserverv3.domain.post.dto.response.AllPostResponse;
 import com.example.gifserverv3.domain.post.dto.response.SinglePostResponse;
 import com.example.gifserverv3.domain.post.entity.PostEntity;
 import com.example.gifserverv3.domain.post.service.PostService;
+import com.example.gifserverv3.global.login.LoginCheck;
 import com.example.gifserverv3.global.util.MsgResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -28,20 +29,15 @@ public class PostController {
     private PostService postService;
 
     @PostMapping("/create")
-    public ResponseEntity<MsgResponseDto> createPost(
+    @LoginCheck
+    public ResponseEntity<Object> createPost(
             @RequestBody @Valid CreateRequest createRequest,
-            HttpServletRequest request) {
-        // 세션에서 사용자 정보 찾기
-        UserEntity user = (UserEntity) request.getSession().getAttribute("user");
+            HttpSession session) {
 
-        // 사용자 정보가 없으면 로그인 해주세요 메시지 반환
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
+        Long userId = (Long) session.getAttribute("user");
 
         // 서비스에 사용자 정보와 함께 게시물 생성 요청
-        postService.createPost(createRequest, request);
+        postService.createPost(userId, createRequest);
 
         // 성공 메시지 반환
         MsgResponseDto responseDto = new MsgResponseDto("글 작성이 성공적으로 완료되었습니다.", 200);
@@ -49,34 +45,27 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<Object> getPostById(@PathVariable Long id, HttpServletRequest session) {
 
         // 세션에서 사용자 정보 가져오기
-        HttpSession session = request.getSession(false);
+        Long userId = (Long) session.getAttribute("user");
         // 세션이 존재하면 가져오고, 없으면 null 반환
-        if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
 
-        PostEntity post = postService.getPostById(id); // 서비스에서 특정 id로 게시물 조회
+        PostEntity post = postService.getPostById(id, userId); // 서비스에서 특정 id로 게시물 조회
 
         // PostEntity를 SinglePostResponse로 변환하여 응답 반환
         SinglePostResponse responseDto = convertToSinglePostResponse(post);
         return ResponseEntity.ok(responseDto);
     }
+
     // 모든 게시물을 조회하는 엔드포인트
     @GetMapping
-    public ResponseEntity<?> getAllPosts(HttpServletRequest request) {
-        List<PostEntity> posts = postService.getAllPosts(); // 서비스에서 모든 게시물 조회
+    public ResponseEntity<Object> getAllPosts(HttpSession session) {
 
         // 세션에서 사용자 정보 가져오기
-        HttpSession session = request.getSession(false);
-        // 세션이 존재하면 가져오고, 없으면 null 반환
-        if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
+        Long userId = (Long) session.getAttribute("user");
+
+        List<PostEntity> posts = postService.getAllPosts(userId);
 
         // PostEntity 리스트를 AllPostResponse로 변환하여 응답 반환
         List<SinglePostResponse> postResponses = posts.stream()
@@ -88,16 +77,12 @@ public class PostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<MsgResponseDto> updatePost( @PathVariable Long postId, @RequestBody @Valid UpdateRequest requestDto, HttpSession session) {
+    public ResponseEntity<MsgResponseDto> updatePost(@PathVariable Long postId, @RequestBody @Valid UpdateRequest requestDto, HttpSession session) {
 
         // 세션에서 사용자 정보 가져오기
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
+        Long userId = (Long) session.getAttribute("user");
 
-        postService.updatePost(postId, requestDto, user);
+        postService.updatePost(postId, requestDto, userId);
 
         MsgResponseDto responseDto = new MsgResponseDto("게시물 수정이 성공적으로 완료되었습니다.", 200);
         return ResponseEntity.ok(responseDto);
@@ -106,13 +91,9 @@ public class PostController {
     @PutMapping("/{postId}/update")
     public ResponseEntity<MsgResponseDto> updatePost(@PathVariable Long postId, HttpSession session) {
         // 세션에서 사용자 정보 가져오기
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
+        Long userId = (Long) session.getAttribute("user");
 
-        postService.updateTime(postId, user);
+        postService.updateTime(postId, userId);
 
         MsgResponseDto responseDto = new MsgResponseDto("게시물 시간 업데이트가 성공적으로 완료되었습니다.", 200);
         return ResponseEntity.ok(responseDto);
@@ -121,31 +102,21 @@ public class PostController {
     @DeleteMapping("/{postId}/delete")
     public ResponseEntity<MsgResponseDto> deletePost(@PathVariable Long postId, HttpSession session) {
         // 세션에서 사용자 정보 가져오기
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
+        Long userId = (Long) session.getAttribute("user");
 
-        postService.deletePost(postId, user);
+        postService.deletePost(postId, userId);
 
         MsgResponseDto responseDto = new MsgResponseDto("게시물이 성공적으로 삭제되었습니다.", 200);
         return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<MsgResponseDto> toggleLike(@PathVariable Long postId, HttpServletRequest request) {
+    public ResponseEntity<MsgResponseDto> toggleLike(@PathVariable Long postId, HttpSession session) {
         // 세션에서 user 가져오기
-        UserEntity user = (UserEntity) request.getSession().getAttribute("user");
-
-        // 예외 처리: 사용자 세션이 없는 경우
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MsgResponseDto("로그인 해주세요.", HttpStatus.UNAUTHORIZED.value()));
-        }
+        Long userId = (Long) session.getAttribute("user");
 
         // 좋아요 처리
-        boolean isLiked = postService.toggleLike(user, postId);
+        boolean isLiked = postService.toggleLike(userId, postId);
 
         // 상태에 따른 메시지 생성
         String message = isLiked ? "좋아요를 눌렀습니다." : "좋아요를 취소하였습니다.";
