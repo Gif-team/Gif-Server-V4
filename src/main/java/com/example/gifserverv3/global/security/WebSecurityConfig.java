@@ -32,6 +32,7 @@ public class WebSecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/refresh")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                        .requestMatchers("/api/auth/login").authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/api/post/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/badge/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/chat/**")).permitAll()
@@ -55,7 +56,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 프론트엔드 도메인 허용 (localhost, 배포된 프론트엔드 도메인)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://gsmitemfind.com"));
 
         // 모든 헤더 허용
         configuration.addAllowedHeader("*");

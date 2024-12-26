@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    @LoginCheck
+//    @LoginCheck
     public ResponseEntity<Object> getUserInfo(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         UserInfoResponse userInfo = userService.getUserInfoById(userId);
