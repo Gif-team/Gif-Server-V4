@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class BadgeService {
+public class BadgeServiceImpl {
 
     private final PostRepository postRepository;
     private final BadgeRepository badgeRepository;
 
-    public BadgeService(PostRepository postRepository, BadgeRepository badgeRepository) {
+    public BadgeServiceImpl(PostRepository postRepository, BadgeRepository badgeRepository) {
         this.postRepository = postRepository;
         this.badgeRepository = badgeRepository;
     }

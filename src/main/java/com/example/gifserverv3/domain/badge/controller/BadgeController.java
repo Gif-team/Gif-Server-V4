@@ -1,7 +1,7 @@
 package com.example.gifserverv3.domain.badge.controller;
 
 import com.example.gifserverv3.domain.auth.entity.UserEntity;
-import com.example.gifserverv3.domain.badge.service.BadgeService;
+import com.example.gifserverv3.domain.badge.service.BadgeServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,9 @@ import java.util.Map;
 @RequestMapping("/api/badge")
 public class BadgeController {
 
-    private final BadgeService badgeService;
+    private final BadgeServiceImpl badgeService;
 
-    public BadgeController(BadgeService badgeService) {
+    public BadgeController(BadgeServiceImpl badgeService) {
         this.badgeService = badgeService;
     }
 
