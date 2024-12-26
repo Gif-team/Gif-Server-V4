@@ -1,4 +1,5 @@
 # src/main/resources/application.yml
+
 spring:
   datasource:
     url: jdbc:postgresql://ep-lively-moon-a1ujoo74.ap-southeast-1.aws.neon.tech/gifdb
@@ -39,7 +40,12 @@ server:
   port: 8080
   servlet:
     session:
-      timeout: 30m
+      timeout: 3600
+      cookie:
+        name: SESSION
+        http-only: true
+        path: /
+        max-age: 3600
 
 cloud:
   aws:

@@ -66,7 +66,7 @@ public class UserController {
         return ResponseUtils.ok(USER_UPDATE_SUCCESS);
     }
 
-    @GetMapping
+    @GetMapping("/user")
     @LoginCheck
     public ResponseEntity<Object> getUserInfo(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
