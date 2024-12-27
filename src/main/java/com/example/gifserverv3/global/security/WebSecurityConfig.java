@@ -56,7 +56,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 프론트엔드 도메인 허용 (localhost, 배포된 프론트엔드 도메인)
-        configuration.setAllowedOrigins(Arrays.asList("http://gsmitemfind.com"));
+        configuration.setAllowedOrigins(Arrays.asList("https://www.gsmitemfind.com"));
 
         // 모든 헤더 허용
         configuration.addAllowedHeader("*");
