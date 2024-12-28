@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateResponseDto {
+public class CreateResponse {
     private String message;
     private int statusCode;
     private Long postId; // 추가된 필드
