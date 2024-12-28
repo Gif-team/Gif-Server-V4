@@ -3,14 +3,17 @@ package com.example.gifserverv3.domain.badge.service;
 import com.example.gifserverv3.domain.badge.entity.BadgeEntity;
 import com.example.gifserverv3.domain.badge.repository.BadgeRepository;
 import com.example.gifserverv3.domain.post.repository.PostRepository;
+import com.example.gifserverv3.global.exception.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.gifserverv3.global.type.ErrorCode.NOT_FOUND_USER;
+
 @Service
-public class BadgeServiceImpl {
+public class BadgeServiceImpl implements BadgeService{
 
     private final PostRepository postRepository;
     private final BadgeRepository badgeRepository;
@@ -22,6 +25,11 @@ public class BadgeServiceImpl {
 
     @Transactional
     public Map<String, Boolean> updateBadgesForUser(Long userId) {
+
+        if (userId == null) {
+            throw new CustomException(NOT_FOUND_USER);
+        }
+
         // category == true 게시물 개수
         long trueCategoryCount = postRepository.countTrueCategoryPostsByUserId(userId);
 
