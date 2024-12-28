@@ -59,6 +59,14 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/user")
+    @LoginCheck
+    public List<PostEntity> getPostsBySession(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+
+        return postService.getPostsBySession(userId);
+    }
+
     // 모든 게시물을 조회하는 엔드포인트
     @GetMapping
     @LoginCheck
