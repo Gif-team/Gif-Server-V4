@@ -191,6 +191,15 @@ public class PostServiceImpl implements PostService {
         return likeEntity.isLiked();
     }
 
+    public List<PostEntity> getPostsBySession(Long userId) {
+
+        if (userId == null) {
+            throw new IllegalStateException("User is not logged in.");
+        }
+
+        return postRepository.getPostsBySession(userId);
+    }
+
     // SinglePostResponse로 변환
     public SinglePostResponse convertToSinglePostResponse(PostEntity postEntity) {
         SinglePostResponse.BuildingResponseDto buildingDto = new SinglePostResponse.BuildingResponseDto(
