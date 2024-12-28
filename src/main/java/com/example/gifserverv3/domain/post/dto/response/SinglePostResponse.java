@@ -17,7 +17,7 @@ public class SinglePostResponse {
     private LocalDateTime realtime;
     private String writer;
     private Long writerId;
-    private int numberLike;
+    private int likeNumber;
     private BuildingResponseDto building;
 
     // 빌딩 정보 DTO

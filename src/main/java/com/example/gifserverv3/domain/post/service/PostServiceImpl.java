@@ -11,7 +11,6 @@ import com.example.gifserverv3.domain.post.dto.response.SinglePostResponse;
 import com.example.gifserverv3.domain.post.entity.PostEntity;
 import com.example.gifserverv3.domain.post.repository.PostRepository;
 import com.example.gifserverv3.global.exception.CustomException;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,6 +189,15 @@ public class PostServiceImpl implements PostService {
 
         // 변경된 좋아요 상태 반환
         return likeEntity.isLiked();
+    }
+
+    public List<PostEntity> getPostsBySession(Long userId) {
+
+        if (userId == null) {
+            throw new IllegalStateException("User is not logged in.");
+        }
+
+        return postRepository.getPostsBySession(userId);
     }
 
     // SinglePostResponse로 변환

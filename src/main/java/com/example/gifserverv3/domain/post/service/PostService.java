@@ -57,5 +57,10 @@ public interface PostService {
      * 게시물 좋아요
      */
     boolean toggleLike(Long userId, Long postId);
+
+    /**
+     * 게시물 칮가 (session)
+     */
+    List<PostEntity> getPostsBySession(Long userId);
 }
 
