@@ -1,9 +1,9 @@
 package com.example.gifserverv3.domain.post.controller;
 
-import com.example.gifserverv3.domain.auth.entity.UserEntity;
 import com.example.gifserverv3.domain.post.dto.request.CreateRequest;
 import com.example.gifserverv3.domain.post.dto.request.UpdateRequest;
 import com.example.gifserverv3.domain.post.dto.response.AllPostResponse;
+import com.example.gifserverv3.domain.post.dto.response.CreateResponse;
 import com.example.gifserverv3.domain.post.dto.response.SinglePostResponse;
 import com.example.gifserverv3.domain.post.entity.PostEntity;
 import com.example.gifserverv3.domain.post.service.PostService;
@@ -37,19 +37,20 @@ public class PostController {
         Long userId = (Long) session.getAttribute("user");
 
         // 서비스에 사용자 정보와 함께 게시물 생성 요청
-        postService.createPost(userId, createRequest);
+        PostEntity createPost = postService.createPost(userId, createRequest);
 
         // 성공 메시지 반환
-        MsgResponseDto responseDto = new MsgResponseDto("글 작성이 성공적으로 완료되었습니다.", 200);
+        CreateResponse responseDto = new CreateResponse("글 작성이 성공적으로 완료되었습니다.", 200, createPost.getPostid());
+
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/{id}")
+    @LoginCheck
     public ResponseEntity<Object> getPostById(@PathVariable Long id, HttpServletRequest session) {
 
         // 세션에서 사용자 정보 가져오기
         Long userId = (Long) session.getAttribute("user");
-        // 세션이 존재하면 가져오고, 없으면 null 반환
 
         PostEntity post = postService.getPostById(id, userId); // 서비스에서 특정 id로 게시물 조회
 
@@ -60,6 +61,7 @@ public class PostController {
 
     // 모든 게시물을 조회하는 엔드포인트
     @GetMapping
+    @LoginCheck
     public ResponseEntity<Object> getAllPosts(HttpSession session) {
 
         // 세션에서 사용자 정보 가져오기
@@ -77,6 +79,7 @@ public class PostController {
     }
 
     @PutMapping("/{postId}")
+    @LoginCheck
     public ResponseEntity<MsgResponseDto> updatePost(@PathVariable Long postId, @RequestBody @Valid UpdateRequest requestDto, HttpSession session) {
 
         // 세션에서 사용자 정보 가져오기
@@ -89,6 +92,7 @@ public class PostController {
     }
 
     @PutMapping("/{postId}/update")
+    @LoginCheck
     public ResponseEntity<MsgResponseDto> updatePost(@PathVariable Long postId, HttpSession session) {
         // 세션에서 사용자 정보 가져오기
         Long userId = (Long) session.getAttribute("user");
@@ -100,6 +104,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}/delete")
+    @LoginCheck
     public ResponseEntity<MsgResponseDto> deletePost(@PathVariable Long postId, HttpSession session) {
         // 세션에서 사용자 정보 가져오기
         Long userId = (Long) session.getAttribute("user");
@@ -111,6 +116,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
+    @LoginCheck
     public ResponseEntity<MsgResponseDto> toggleLike(@PathVariable Long postId, HttpSession session) {
         // 세션에서 user 가져오기
         Long userId = (Long) session.getAttribute("user");
