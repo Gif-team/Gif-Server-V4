@@ -36,6 +36,10 @@ public class BadgeServiceImpl implements BadgeService{
         // category == false 게시물 개수
         long falseCategoryCount = postRepository.countFalseCategoryPostsByUserId(userId);
 
+        // 좋아요 수가 가장 큰 값 조회
+        Integer maxLikeNumber = postRepository.findMaxLikeNumberByUserId(userId);
+        boolean hasPostWithLikesOver50 = maxLikeNumber != null && maxLikeNumber >= 50;
+
         // 유저의 기존 뱃지 상태 조회 또는 초기화
         BadgeEntity badge = badgeRepository.findByUserId(userId).orElse(
                 BadgeEntity.builder().userId(userId).build());
@@ -43,7 +47,7 @@ public class BadgeServiceImpl implements BadgeService{
         // 조건에 따라 뱃지 상태 업데이트
         boolean badge1Active = trueCategoryCount >= 10;
         boolean badge2Active = falseCategoryCount >= 10;
-        boolean badge3Active = trueCategoryCount >= 20 && falseCategoryCount >= 20;
+        boolean badge3Active = hasPostWithLikesOver50;
 
         badge.setBadge1Active(badge1Active); // 1번 뱃지
         badge.setBadge2Active(badge2Active); // 2번 뱃지
