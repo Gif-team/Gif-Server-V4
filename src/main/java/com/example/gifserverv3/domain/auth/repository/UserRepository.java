@@ -17,12 +17,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findUserByEmailAndPassword(String email, String password);
 
-    @Query("select u from UserEntity u where u.id in (:ids) order by u.status desc ")
-    List<UserEntity> findUserById(@Param("ids") List<Long> ids, Pageable pageable);
-
-    @Query("SELECT u FROM UserEntity u WHERE u.username LIKE :username")
-    Optional<UserEntity> findByUsernameLike(@Param ("username")String username);
-
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 }
