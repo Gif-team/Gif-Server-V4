@@ -11,7 +11,6 @@ import com.example.gifserverv3.domain.post.dto.response.SinglePostResponse;
 import com.example.gifserverv3.domain.post.entity.PostEntity;
 import com.example.gifserverv3.domain.post.repository.PostRepository;
 import com.example.gifserverv3.global.exception.CustomException;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
