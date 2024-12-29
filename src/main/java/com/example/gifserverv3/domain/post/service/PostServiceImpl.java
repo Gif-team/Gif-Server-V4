@@ -14,6 +14,7 @@ import com.example.gifserverv3.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -78,7 +79,7 @@ public class PostServiceImpl implements PostService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
         // 모든 게시물 조회
-        return postRepository.findAll();
+        return postRepository.findAll(Sort.by(Sort.Order.desc("realtime")));
     }
 
     @Transactional
@@ -197,6 +198,7 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(NOT_FOUND_USER);
         }
 
+        // 정렬된 게시물 조회
         return postRepository.getPostsBySession(userId);
     }
 
