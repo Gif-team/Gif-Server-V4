@@ -194,7 +194,7 @@ public class PostServiceImpl implements PostService {
     public List<PostEntity> getPostsBySession(Long userId) {
 
         if (userId == null) {
-            throw new IllegalStateException("User is not logged in.");
+            throw new CustomException(NOT_FOUND_USER);
         }
 
         return postRepository.getPostsBySession(userId);
