@@ -10,15 +10,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
 
     Optional<LikeEntity> findByUserAndPost(UserEntity user, PostEntity post);
-
-    List<LikeEntity> findByPostId(Long postId);
 
     @Modifying
     @Transactional
