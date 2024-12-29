@@ -198,6 +198,7 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(NOT_FOUND_USER);
         }
 
+        // 정렬된 게시물 조회
         return postRepository.getPostsBySession(userId);
     }
 
