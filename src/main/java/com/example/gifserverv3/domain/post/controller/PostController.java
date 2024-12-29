@@ -1,5 +1,6 @@
 package com.example.gifserverv3.domain.post.controller;
 
+import com.example.gifserverv3.domain.like.service.LikeService;
 import com.example.gifserverv3.domain.post.dto.request.CreateRequest;
 import com.example.gifserverv3.domain.post.dto.request.UpdateRequest;
 import com.example.gifserverv3.domain.post.dto.response.AllPostResponse;
@@ -17,7 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 // Controller
@@ -27,6 +30,9 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private LikeService likeService;
 
     @PostMapping("/create")
     @LoginCheck
@@ -137,6 +143,20 @@ public class PostController {
         MsgResponseDto responseDto = new MsgResponseDto(message, HttpStatus.OK.value());
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/{postId}/like-status")
+    public ResponseEntity<Map<String, Boolean>> checkLikeStatus(HttpSession session, @PathVariable Long postId) {
+
+        Long userId = (Long) session.getAttribute("user");
+
+        boolean isLiked = likeService.checkIfUserLikedPost(userId, postId);
+
+        Map<String, Boolean> response = new HashMap<>();
+
+        response.put("liketrueorfalse", isLiked);
+
+        return ResponseEntity.ok(response);
     }
 
     // PostEntity를 SinglePostResponse로 변환하는 메소드
