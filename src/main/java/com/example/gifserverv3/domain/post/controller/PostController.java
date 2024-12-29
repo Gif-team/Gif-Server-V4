@@ -123,6 +123,8 @@ public class PostController {
         // 세션에서 사용자 정보 가져오기
         Long userId = (Long) session.getAttribute("user");
 
+        likeService.deleteLikesByPostId(postId, userId);
+
         postService.deletePost(postId, userId);
 
         MsgResponseDto responseDto = new MsgResponseDto("게시물이 성공적으로 삭제되었습니다.", 200);
