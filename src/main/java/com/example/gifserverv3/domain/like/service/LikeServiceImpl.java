@@ -30,7 +30,15 @@ public class LikeServiceImpl implements LikeService {
             throw new CustomException(NOT_FOUND_USER);
         }
 
-        return postRepository.isLikedByUser(userId, postId);
+        if (postId == null) {
+            throw new CustomException(NOT_FOUND_POST);
+        }
+
+        Boolean isLiked = postRepository.isLikedByUser(userId, postId);
+        boolean isLikedOrFalse = (isLiked != null) ? isLiked : false;
+
+        // boolean로 처리하고 있으므로, null을 반환할 수 없음
+        return isLikedOrFalse;
     }
 
     // postId에 해당하는 모든 LikeEntity 삭제

@@ -24,7 +24,7 @@ public class LikeEntity {
     @JoinColumn(name = "postId")
     private PostEntity post; // 좋아요를 받은 게시글
 
-    private boolean liked; // 좋아요 여부 (true: 좋아요, false: 안누름)
+    private boolean liked = false;
 
     // 빌더 패턴을 사용한 LikeEntity 클래스
     @Builder

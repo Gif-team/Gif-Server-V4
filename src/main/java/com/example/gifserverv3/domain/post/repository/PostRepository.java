@@ -20,7 +20,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     @Query("SELECT MAX(p.likeNumber) FROM PostEntity p WHERE p.writerId = :userId")
     Integer findMaxLikeNumberByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT l.liked FROM LikeEntity l WHERE l.user.id = :userId AND l.post.postid = :postId")
+    @Query("SELECT COALESCE(l.liked, false) FROM LikeEntity l WHERE l.user.id = :userId AND l.post.postid = :postId")
     boolean isLikedByUser(@Param("userId") Long userId, @Param("postId") Long postId);
-
 }
