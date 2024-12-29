@@ -146,6 +146,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/like-status")
+    @LoginCheck
     public ResponseEntity<Map<String, Boolean>> checkLikeStatus(HttpSession session, @PathVariable Long postId) {
 
         Long userId = (Long) session.getAttribute("user");
