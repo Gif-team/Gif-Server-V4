@@ -116,7 +116,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 throw new CustomException(ROOM_PASSWORD_MISMATCH);
             }
 
-            if (!chatRoom.getIsPrivate() && chatRoom.getPassword() == null) {
+            if (chatRoom.getIsPrivate() && chatRoom.getPassword() != null) {
                 List<Long> userList = userChatRoomRepository
                         .findUserChatRoomByChatRoom_Id(roomId);
                 if (userList.contains(userId)) {
@@ -127,8 +127,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 if (currentUserCount >= chatRoom.getUserCountMax()) {
                     throw new CustomException(ErrorCode.ROOM_USER_FULL);
                 }
-                // 비밀번호 확인
 
+                // 비밀번호 확인
                 UserChatRoomEntity userChatRoom = UserChatRoomEntity.builder()
                         .user(findUser)
                         .chatRoom(chatRoom)
@@ -136,6 +136,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                         .build();
                 UserChatRoomEntity save = userChatRoomRepository.save(userChatRoom);
                 String topicName = BASIC_TOPIC + save.getChatRoom().getId();
+                System.out.println("userChatRoom = " + userChatRoom.getUser());
+                System.out.println("userChatRoom = " + userChatRoom.getChatRoom());
                 kafkaTemplate.send(topicName, "Subscribed"); // 개선점
                 // 비즈니스 로직 끝
             }
