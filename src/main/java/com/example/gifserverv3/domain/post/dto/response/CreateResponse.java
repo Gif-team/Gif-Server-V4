@@ -12,5 +12,5 @@ import lombok.Setter;
 public class CreateResponse {
     private String message;
     private int statusCode;
-    private Long postId; // 추가된 필드
+    private Long postId;
 }

@@ -2,6 +2,7 @@ package com.example.gifserverv3.domain.chatroom.controller;
 
 import com.example.gifserverv3.domain.chatroom.controller.request.ChatRoomRequest;
 import com.example.gifserverv3.domain.chatroom.controller.request.ChatRoomUpdateRequest;
+import com.example.gifserverv3.domain.chatroom.controller.response.CreateResponse;
 import com.example.gifserverv3.domain.chatroom.dto.ChatRoomDto;
 import com.example.gifserverv3.domain.chatroom.dto.ChatRoomUserDto;
 import com.example.gifserverv3.domain.chatroom.entity.ChatRoomEntity;
@@ -46,17 +47,16 @@ public class ChatRoomController {
             HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         ChatRoomEntity room = chatRoomService.createRoom(chatRoomRequest, userId);
-        return ResponseUtils.ok(CREATE_CHAT_ROOM_SUCCESS, room.getCreatedAt());
+        CreateResponse response = new CreateResponse(room.getId(), room.getCreatedAt());
+        return ResponseUtils.ok(CREATE_CHAT_ROOM_SUCCESS, response);
     }
 
     // 방의 key를 통해 입장할 수 있어야 함.
     // 동시성 이슈 체크
-    @PostMapping("/room/join/{roomId}")
+    @PostMapping("/room/join/{roomId}/{userId}")
     @LoginCheck
     public ResponseEntity<Object> joinRoom(
-            @PathVariable Long roomId, @RequestBody ChatRoomRequest chatRoomRequest,
-            HttpSession session) {
-        Long userId = (Long) session.getAttribute("user");
+            @PathVariable Long roomId, @PathVariable Long userId, @RequestBody ChatRoomRequest chatRoomRequest) {
         chatRoomService.joinRoom(roomId, userId, chatRoomRequest);
         return ResponseUtils.ok(JOIN_CHAT_ROOM_SUCCESS);
     }
